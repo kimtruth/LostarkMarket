@@ -12,3 +12,7 @@ format:
 lint:
 	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.44.2
 	golangci-lint run ./...
+
+.PHONY: test
+test:
+	go test ./...
