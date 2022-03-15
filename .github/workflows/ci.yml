@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  - push
+
+jobs:
+  lint:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up GO 1.17
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.17
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Lint
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          make lint
+
+  unit:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up GO 1.17
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.17
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Test
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          make test
