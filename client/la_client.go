@@ -51,6 +51,37 @@ func (c *LAClient) postFormRequest(path string, values url.Values) (*http.Respon
 	return c.httpClient.Do(req)
 }
 
+func (c *LAClient) GetRefiningMaterials() ([]MarketItem, error) {
+	params := make(url.Values)
+	params.Add("firstCategory", "50000") // 강화재료
+	params.Add("secondCategory", "0")    // 전체
+	params.Add("tier", "3")              // 티어
+	params.Add("isInit", "false")
+	params.Add("sortType", "7")
+
+	var totalItems []MarketItem
+	pageNo := 1
+	for {
+		params.Set("pageNo", strconv.Itoa(pageNo))
+		resp, err := c.postFormRequest("/Market/List_v2", params)
+		if err != nil {
+			return nil, err
+		}
+		items, err := parseMarketItems(resp.Body)
+		closeBody(resp)
+		if err != nil {
+			return nil, err
+		}
+		if len(items) == 0 {
+			break
+		}
+		totalItems = append(totalItems, items...)
+		pageNo += 1
+	}
+
+	return totalItems, nil
+}
+
 func parseMarketItems(r io.ReadCloser) ([]MarketItem, error) {
 	doc, err := goquery.NewDocumentFromReader(r)
 	if err != nil {
@@ -87,37 +118,6 @@ func parseMarketItems(r io.ReadCloser) ([]MarketItem, error) {
 	}
 
 	return items, nil
-}
-
-func (c *LAClient) GetRefiningMaterials() ([]MarketItem, error) {
-	params := make(url.Values)
-	params.Add("firstCategory", "50000") // 강화재료
-	params.Add("secondCategory", "0")    // 전체
-	params.Add("tier", "3")              // 티어
-	params.Add("isInit", "false")
-	params.Add("sortType", "7")
-
-	var totalItems []MarketItem
-	pageNo := 1
-	for {
-		params.Set("pageNo", strconv.Itoa(pageNo))
-		resp, err := c.postFormRequest("/Market/List_v2", params)
-		if err != nil {
-			return nil, err
-		}
-		items, err := parseMarketItems(resp.Body)
-		closeBody(resp)
-		if err != nil {
-			return nil, err
-		}
-		if len(items) == 0 {
-			break
-		}
-		totalItems = append(totalItems, items...)
-		pageNo += 1
-	}
-
-	return totalItems, nil
 }
 
 func toFloat64(s string) (float64, error) {
