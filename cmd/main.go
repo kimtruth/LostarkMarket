@@ -18,5 +18,5 @@ func main() {
 		cfg.Setting().LAToken,
 	)
 
-	println(laClient)
+	laClient.GetRefiningMaterials()
 }
