@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/kimtruth/LostarkMarket/client"
@@ -21,7 +22,7 @@ func main() {
 
 	items, err := laClient.GetRefiningMaterials()
 	if err != nil {
-		panic(err)
+		log.Fatalf("%+v", err)
 	}
 
 	println("아이템명 / 전일 평균 거래가 / 최근 거래가 / 최저가")

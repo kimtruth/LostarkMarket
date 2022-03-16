@@ -65,12 +65,12 @@ func (c *LAClient) GetRefiningMaterials() ([]MarketItem, error) {
 		params.Set("pageNo", strconv.Itoa(pageNo))
 		resp, err := c.postFormRequest("/Market/List_v2", params)
 		if err != nil {
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 		items, err := parseMarketItems(resp.Body)
 		closeBody(resp)
 		if err != nil {
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 		if len(items) == 0 {
 			break
